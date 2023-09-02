@@ -9,6 +9,7 @@ const btnReset = document.querySelector('button[data-reset]');
 let currentBg = JSON.parse(localStorage.getItem('saved-bg-color')) || '#fafafa'; // змінна для кольору
 let interval; // змінна для айдішки інтервалу
 document.body.style.backgroundColor = currentBg; // встановлення бекграунду записаного в змінну куррентБг.
+document.body.style.transition = 'background-color 0.4s ease'; //інлайново додав стиль для плавної зміни кольорів
 
 btnStop.disabled = true; //за змовчуванням вимкнена кнопка стоп.
 if (currentBg === '#fafafa') {
@@ -47,10 +48,13 @@ function onStop(evt) {
 
 function onReset(evt) {
   if (evt && currentBg != '#fafafa') {
-    currentBg = '#fafafa';
-    document.body.style.backgroundColor = currentBg;
-    localStorage.setItem('saved-bg-color', JSON.stringify(currentBg));
-    btnReset.disabled = true;
+    const confirmed = confirm('Встановити фон сторінки на білий колір?');
+    if (confirmed) {
+      currentBg = '#fafafa';
+      document.body.style.backgroundColor = currentBg;
+      localStorage.setItem('saved-bg-color', JSON.stringify(currentBg));
+      btnReset.disabled = true;
+    }
   }
 }
 
