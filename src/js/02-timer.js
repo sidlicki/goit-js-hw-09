@@ -9,13 +9,18 @@ const hoursEl = document.querySelector('[data-hours]');
 const daysEl = document.querySelector('[data-days]');
 const btnStart = document.querySelector('button[data-start]');
 
+// створення кнопки ресет/поява при натисканні старту.
+const btnReset = document.createElement('button');
+btnReset.textContent = 'Stop & Reset';
+btnReset.setAttribute('data-reset', '');
+
 let selectedDate;
 let interval; // змінна для айдішки інтервалу
 
 // стилізація
 const timer = document.querySelector('.timer');
 timer.style =
-  'border: 4px solid #b66ce7; border-radius: 25px; transition: border-color 2s ease; height: fit-content;width: fit-content;margin-right: auto;margin-left: auto;padding: 30px;margin-top: 50px;display: flex;gap: 30px;';
+  'border: 4px solid #b66ce7; border-radius: 25px;   background-color: #b66ce730;  transition: background-color 2s ease, border-color 2s ease; height: fit-content;width: fit-content;margin-right: auto;margin-left: auto;padding: 30px;margin-top: 50px;display: flex;gap: 30px;';
 const field = document.querySelectorAll('.field');
 field.forEach(element => {
   element.style =
@@ -43,10 +48,12 @@ const options = {
       Notiflix.Notify.failure('Please choose a date in the future');
       btnStart.disabled = true;
       timer.style.borderColor = '#d14949';
+      timer.style.backgroundColor = '#d1494930';
     } else {
       btnStart.disabled = false;
       selectedDate = selectedDates[0];
       timer.style.borderColor = '#ebc060';
+      timer.style.backgroundColor = '#ebc06030';
     }
   },
 };
@@ -56,13 +63,21 @@ btnStart.addEventListener('click', onStart);
 function onStart() {
   btnStart.disabled = true;
   timer.style.borderColor = '#3674c5';
+  timer.style.backgroundColor = '#3674c530';
+
+  btnStart.insertAdjacentElement('afterend', btnReset);
+  btnReset.addEventListener('click', onReset);
 
   interval = setInterval(() => {
     if (selectedDate - new Date() < 0) {
       clearInterval(interval);
       Notiflix.Notify.success('Час настав!');
       timer.style.borderColor = '#05ca26d2';
+      timer.style.backgroundColor = '#05ca2630';
       btnStart.disabled = false;
+      setTimeout(() => {
+        onReset();
+      }, 3000);
       return;
     }
 
@@ -97,4 +112,21 @@ function turnOnTimer(obj) {
 
 function addLeadingZero(value) {
   return String(value).padStart(2, '0');
+}
+
+function onReset() {
+  clearInterval(interval);
+  btnStart.disabled = true;
+  btnReset.removeEventListener('click', onReset);
+
+  btnReset.remove();
+
+  secondsEl.textContent = '00';
+  minutesEl.textContent = '00';
+  hoursEl.textContent = '00';
+  daysEl.textContent = '00';
+
+  // відновлюємо стилі таймера та відключаємо рамку
+  timer.style.borderColor = '#b66ce7';
+  timer.style.backgroundColor = '#b66ce730';
 }
